@@ -4,6 +4,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 
+import seedSuperAdminRoute from './routes/seedSuperAdmin.js';
 import authRoutes from './routes/auth.js';
 import clientRoutes from './routes/clients.js';
 import contentRoutes from './routes/content.js';
