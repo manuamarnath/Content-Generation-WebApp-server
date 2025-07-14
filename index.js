@@ -19,6 +19,7 @@ app.get('/', (req, res) => {
   res.send('Echo5Digital-Content-Generator API running');
 });
 
+app.use('/api', seedSuperAdminRoute); // 👈 Add this before the rest
 app.use('/api/auth', authRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/content', contentRoutes);
