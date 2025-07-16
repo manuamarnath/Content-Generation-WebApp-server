@@ -18,7 +18,7 @@ const transporter = nodemailer.createTransport({
 
 // Helper function to send password reset email
 const sendResetEmail = async (email, resetToken) => {
-  const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+  const baseUrl = process.env.FRONTEND_URL || 'https://content-generation-web-app.vercel.app/';
   const resetUrl = `${baseUrl}/reset-password/${resetToken}`;
   
   const mailOptions = {
