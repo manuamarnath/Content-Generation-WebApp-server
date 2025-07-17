@@ -18,10 +18,8 @@ const transporter = nodemailer.createTransport({
 
 // Helper function to send password reset email
 const sendResetEmail = async (email, resetToken) => {
-  const baseUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+  const baseUrl = process.env.FRONTEND_URL || 'https://content-generation-web-app.vercel.app/';
   const resetUrl = `${baseUrl}/reset-password/${resetToken}`;
-  
-  console.log(`Sending reset email to ${email} with reset URL: ${resetUrl}`);
   
   const mailOptions = {
     from: process.env.EMAIL_USER || 'your-email@gmail.com',
@@ -112,6 +110,7 @@ router.post('/change-password', async (req, res) => {
   }
 });
 
+
 // Forgot Password - Request reset link
 router.post('/forgot-password', async (req, res) => {
   try {
@@ -149,30 +148,6 @@ router.post('/forgot-password', async (req, res) => {
   } catch (err) {
     console.error('Forgot password error:', err);
     res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// Verify reset token validity
-router.get('/verify-token/:token', async (req, res) => {
-  try {
-    const { token } = req.params;
-    console.log(`Verifying token: ${token.substring(0, 10)}...`);
-    
-    const user = await User.findOne({
-      resetToken: token,
-      resetTokenExpiry: { $gt: Date.now() }
-    });
-    
-    if (!user) {
-      console.log('Token verification failed: Invalid or expired');
-      return res.json({ valid: false, message: 'Invalid or expired token' });
-    }
-    
-    console.log('Token verified successfully');
-    return res.json({ valid: true });
-  } catch (err) {
-    console.error('Token verification error:', err);
-    res.status(500).json({ valid: false, message: 'Server error' });
   }
 });
 
