@@ -4,14 +4,25 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 
-import seedSuperAdminRoute from './routes/seedSuperAdmin.js';
 import authRoutes from './routes/auth.js';
 import clientRoutes from './routes/clients.js';
 import contentRoutes from './routes/content.js';
 import usersRoutes from './routes/users.js';
 
 const app = express();
-app.use(cors());
+
+// Configure CORS to allow requests from your Vercel frontend
+const corsOptions = {
+  origin: [
+    'https://echo5digital-content-generator.vercel.app',
+    'http://localhost:5173', // Local development
+  ],
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 const PORT = process.env.PORT || 5050;
@@ -20,7 +31,6 @@ app.get('/', (req, res) => {
   res.send('Echo5Digital-Content-Generator API running');
 });
 
-app.use('/api', seedSuperAdminRoute); // 👈 Add this before the rest
 app.use('/api/auth', authRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/content', contentRoutes);
