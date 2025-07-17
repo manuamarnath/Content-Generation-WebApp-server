@@ -7,6 +7,8 @@ const userSchema = new mongoose.Schema({
   role: { type: String, enum: ['superadmin', 'user'], default: 'user' },
   approved: { type: Boolean, default: false },
   blocked: { type: Boolean, default: false }, // Added blocked field
+  resetToken: { type: String },
+  resetTokenExpiry: { type: Date },
   createdAt: { type: Date, default: Date.now }
 });
 

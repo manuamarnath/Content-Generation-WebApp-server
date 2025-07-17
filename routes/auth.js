@@ -110,18 +110,31 @@ router.post('/change-password', async (req, res) => {
   }
 });
 
+
 // Forgot Password - Request reset link
 router.post('/forgot-password', async (req, res) => {
   try {
     const { email } = req.body;
-    if (!email) return res.status(400).json({ message: 'Email is required' });
+    console.log(`Received forgot password request for: ${email}`);
+    
+    if (!email) {
+      console.log('Missing email in request');
+      return res.status(400).json({ message: 'Email is required' });
+    }
     
     const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (!user) {
+      console.log(`No user found with email: ${email}`);
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    console.log(`User found: ${user.email}, generating reset token...`);
     
     // Generate a reset token
     const resetToken = crypto.randomBytes(32).toString('hex');
     const resetTokenExpiry = Date.now() + 3600000; // 1 hour
+    
+    console.log(`Reset token generated, expiry set for 1 hour`);
     
     // Update user with reset token info
     user.resetToken = resetToken;
@@ -144,15 +157,26 @@ router.post('/reset-password/:token', async (req, res) => {
     const { token } = req.params;
     const { newPassword } = req.body;
     
-    if (!newPassword) return res.status(400).json({ message: 'New password is required' });
+    console.log(`Attempting to reset password with token: ${token.substring(0, 10)}...`);
+    
+    if (!newPassword) {
+      console.log('Missing new password in request');
+      return res.status(400).json({ message: 'New password is required' });
+    }
     
     // Find user with valid reset token
+    console.log('Looking for user with matching reset token...');
     const user = await User.findOne({
       resetToken: token,
       resetTokenExpiry: { $gt: Date.now() }
     });
     
-    if (!user) return res.status(400).json({ message: 'Invalid or expired token' });
+    if (!user) {
+      console.log('No user found with valid reset token');
+      return res.status(400).json({ message: 'Invalid or expired token' });
+    }
+    
+    console.log(`Found user: ${user.email}, resetting password...`);
     
     // Update password and clear reset token
     user.password = await bcrypt.hash(newPassword, 10);
@@ -160,6 +184,7 @@ router.post('/reset-password/:token', async (req, res) => {
     user.resetTokenExpiry = undefined;
     await user.save();
     
+    console.log('Password reset successful');
     res.json({ message: 'Password reset successful' });
   } catch (err) {
     console.error('Reset password error:', err);
