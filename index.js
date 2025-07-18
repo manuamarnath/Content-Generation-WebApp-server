@@ -20,6 +20,10 @@ app.get('/', (req, res) => {
   res.send('Echo5Digital-Content-Generator API running');
 });
 
+app.get('/ping', (req, res) => {
+  res.status(200).send('pong');
+});
+
 app.use('/api', seedSuperAdminRoute); // 👈 Add this before the rest
 app.use('/api/auth', authRoutes);
 app.use('/api/clients', clientRoutes);
